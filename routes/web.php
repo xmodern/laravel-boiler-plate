@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AnnouncementController;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\PostController;
 
 //Route::get('/login', [PageController::class, 'login'])
 //    ->name('login');
@@ -17,6 +18,8 @@ if (Features::enabled(Features::registration())) {
 }
 
 Route::get('/', [PageController::class, 'index'])->name('index');
+
+Route::resource('posts', PostController::class);
 
 
 
