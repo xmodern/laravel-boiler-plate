@@ -29,6 +29,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'mobile_number',
+        'age',
+        'role_id'
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -48,6 +51,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'mobile_number' => 'string',
+        'age' => 'integer',
+        'role_id' => 'integer',
     ];
     /**
      * The accessors to append to the model's array form.
@@ -61,5 +67,10 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         SendForgotPasswordEmail::dispatch($this, $token);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }

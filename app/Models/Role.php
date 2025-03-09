@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Role extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'content'];
+    protected $fillable = [
+        'name',
+    ];
 
     protected $casts = [
-        'content' => 'string',
-        'user_id' => 'integer'
+        'name' => 'string',
     ];
 }

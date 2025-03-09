@@ -19,7 +19,10 @@ if (Features::enabled(Features::registration())) {
 
 Route::get('/', [PageController::class, 'index'])->name('index');
 
-Route::resource('posts', PostController::class);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::resource('posts', PostController::class);
+});
+
 
 
 

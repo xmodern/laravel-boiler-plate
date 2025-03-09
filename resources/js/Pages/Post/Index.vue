@@ -16,7 +16,7 @@
 
                     </div>
                 </div>
-                <div class="absolute top-2 right-2 text-gray-500 flex gap-2">
+                <div v-if="$page.props.user.role_id === 2" class="absolute top-2 right-2 text-gray-500 flex gap-2">
                     <button class="transition-all ease-in-out duration-300 hover:text-pink-500 hover:scale-110"
                             @click="editPost(post)">
                         <svg class="size-6" fill="currentColor" viewBox="0 0 24 24"
@@ -55,7 +55,6 @@
 </template>
 
 <script>
-
 import Layout from "@/Pages/Layout/Layout.vue";
 //import TeachingMaterialCard from "@/Pages/Components/TeachingMaterialCard.vue";
 import axios from 'axios';
@@ -161,7 +160,6 @@ export default {
         }
     }
 };
-
 </script>
 
 
