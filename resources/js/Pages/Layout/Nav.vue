@@ -2,11 +2,11 @@
     <div class="w-full">
         <!-- แถบส่วนหัวสีฟ้า -->
         <div class="w-full bg-[#92392f] h-10 flex items-center px-4 lg:px-32 fixed top-0 left-0 right-0 z-50">
-            <p class="text-white">Ayutthaya Studies Institute</p>
+            <p class="text-white">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย วิทยาเขตขอนแก่น</p>
         </div>
         <!-- แถบส่วนหัวที่มีเงา -->
         <div class="w-full shadow-md h-20 flex items-center justify-between px-4 lg:px-32 fixed top-10 left-0 right-0 z-50 bg-white">
-            <img src="https://www.aru.ac.th/asi/images/logo_asi3.png" alt="Logo" class="h-16 mr-2">
+            <img src="/img/dm.png" alt="Logo" class="h-16 mr-2">
             <!-- <Link class="flex items-center" :href="route('index')">
                 <h1 class="text-4xl font-bold uppercase">ARU</h1>
                 <h1 class="text-4xl font-bold text-blue-600">Teaching Materials</h1>
