@@ -3,14 +3,43 @@
         <div>
             Post Index
         </div>
-        <div class="flex flex-wrap gap-3">
-            <div v-for="(post,index) in posts" :key="index" class="card w-96 bg-pink-200 card-xs shadow-sm relative">
+        <div class="flex flex-wrap gap-2">
+            <div v-for="(post,index) in posts" :key="index" class="card w-96 bg-gray-300 card-xs shadow-sm relative">
                 <div class="card-body">
                     <h2 class="card-title">{{ index + 1 }}</h2>
+                    <div v-if="editForm.id !== post.id">
+                        <div v-if="post.image === undefined" class="w-full bg-gray-400 h-40 rounded-lg"></div>
+                        <div v-if="post.image !== undefined"
+                             class="w-full bg-gray-400 h-40 rounded-lg overflow-hidden shadow-md border-2 border-white">
+                            <img :src="post.image.url" class="w-full h-40 object-cover">
+                        </div>
+                    </div>
+                    <div v-if="editForm.id === post.id">
+                        <button v-if="editingPreviewImage === null"
+                                class="w-full border border-dashed h-40 rounded-lg cursor-pointer flex justify-center items-center text-gray-500"
+                                type="button"
+                                @click="$refs.editImageInputRef.click()">
+                            <svg class="size-6" fill="none" stroke="currentColor" stroke-width="1.5"
+                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button v-if="editingPreviewImage !== null "
+                                class="w-full h-40 rounded-lg overflow-hidden border-2 border-white shadow-md"
+                                type="button"
+                                @click="$refs.editImageInputRef.click()">
+                            <img :src="editingPreviewImage" class="w-full h-40 object-cover">
+                        </button>
+                    </div>
+
                     <p v-if="editForm.id !== post.id">{{ post.content }}</p>
                     <div v-if="editForm.id === post.id" class="w-full">
                         <textarea v-model="editForm.content" class="w-full rounded-md p-2" rows="4"></textarea>
-                        <div class="w-full flex justify-end">
+                        <p class="text-red-500 text-sm">{{ $page.props.errors.content }}</p>
+                        <div class="w-full flex justify-end gap-1">
+                            <button class="btn btn-sm bg-gray-300 text-gray-500" type="button" @click="resetEditForm">
+                                Cancel
+                            </button>
                             <button class="btn btn-sm btn-primary" type="button" @click="updatePost">Submit</button>
                         </div>
                     </div>
@@ -58,6 +87,31 @@
                 <div class="w-full flex justify-center">
                     <textarea v-model="form.content" class="w-1/2 rounded-lg p-4" placeholder="" rows="4"></textarea>
                 </div>
+                <div class="flex justify-center">
+                    <p v-if="$page.props.errors.content" class="text-red-500">*{{ $page.props.errors.content }}</p>
+                </div>
+
+                <div class="w-full flex justify-center my-4">
+                    <button
+                        v-if="!previewImage"
+                        class="w-60 h-60 border border-dashed flex justify-center items-center text-white cursor-pointer"
+                        type="button"
+                        @click="$refs.photoInputRef.click()">
+                        <svg class="size-6" fill="none" stroke="currentColor" stroke-width="1.5"
+                             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div v-if="previewImage"
+                         class="w-60 h-60 border border-dashed flex justify-center items-center text-white cursor-pointer"
+                         @click="$refs.photoInputRef.click()">
+                        <img :src="previewImage" class="w-60 h-60 object-cover">
+                    </div>
+                </div>
+                <input ref="editImageInputRef" accept="image/*" class="hidden" type="file"
+                       @change="handleSelectEditImage">
+                <input ref="photoInputRef" accept="image/*" class="hidden" type="file"
+                       @change="handleSelectImage">
                 <div class="w-full flex justify-center mt-4">
                     <button :disabled="isLoading" class="btn bg-pink-500">Submit</button>
                 </div>
@@ -86,18 +140,43 @@ export default {
         return {
             form: {
                 id: null,
-                content: ""
+                content: "",
+                image: null
             },
             editForm: {
+                _method: "patch",
                 id: null,
-                content: ""
+                content: "",
+                image: null
             },
-            isLoading: false
+            isLoading: false,
+            previewImage: null,
+            editingPreviewImage: null,
         }
     },
     mounted() {
     },
     methods: {
+        resetEditForm() {
+            this.editingPreviewImage = null;
+            this.editForm.id = null;
+            this.editForm.content = "";
+            this.editForm.image = null;
+        },
+        handleSelectEditImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const blobUrl = URL.createObjectURL(file);
+            this.editingPreviewImage = blobUrl;
+            this.editForm.image = file;
+        },
+        handleSelectImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const blobUrl = URL.createObjectURL(file);
+            this.previewImage = blobUrl;
+            this.form.image = file;
+        },
         async updatePost() {
             this.isLoading = true;
             const result = await this.$swal.fire({
@@ -110,20 +189,35 @@ export default {
                 this.isLoading = false;
                 return;
             }
-            router.patch(this.route('posts.update', this.editForm.id), this.editForm, {
+            router.post(this.route('posts.update', this.editForm.id), this.editForm, {
                 onSuccess: async () => {
                     router.reload({only: ['posts'], preserveScroll: true});
+                    await this.$swal.fire({
+                        title: "Success",
+                        text: "You have updated successfully.",
+                        icon: "success"
+                    });
                     this.editForm.id = null;
                     this.editForm.content = "";
+                    this.editForm.image = null;
                     this.isLoading = false;
                 }
             })
-
 
         },
         editPost(post) {
             this.editForm.id = post.id;
             this.editForm.content = post.content;
+            if (post.image !== undefined) {
+                this.editingPreviewImage = post.image.url;
+            }
+            if (post.image === undefined) {
+                this.editingPreviewImage = null;
+            }
+
+            console.log('-----------------');
+            console.log(this.editingPreviewImage);
+            console.log('-----------------');
         },
         async handleDeletePost(post) {
             const result = await this.$swal.fire({
@@ -167,11 +261,12 @@ export default {
                         icon: "success"
                     });
                     window.location.reload();
+                },
+                onError: () => {
+                    this.isLoading = false;
                 }
             });
         }
     }
 };
 </script>
-
-
