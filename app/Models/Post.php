@@ -15,4 +15,10 @@ class Post extends Model
         'content' => 'string',
         'user_id' => 'integer'
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id','id');
+    }
 }
+
+

@@ -3,7 +3,7 @@
         <!-- แถบส่วนหัวสีฟ้า -->
         <div
             class="w-full bg-pink-600 h-10 flex items-center px-4 lg:px-32 fixed top-0 left-0 right-0 z-50">
-            <p class="">Test Website</p>
+            <p class="">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย วิทยาเขตขอนแก่น</p>
         </div>
         <!-- แถบส่วนหัวที่มีเงา -->
         <div

@@ -6,14 +6,20 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\User;
+use App\Http\Transformers\PostTransformer;
+
 
 class PostController extends Controller
 {
     public function index()
     {
         $posts = Post::all();
+        $postData = fractal($posts, new PostTransformer())->toArray()['data'];
+
+
         return Inertia::render('Post/Index')->with([
-            'posts' => $posts
+          'posts'=>$postData
         ]);
     }
 
@@ -54,4 +60,6 @@ class PostController extends Controller
         $post->delete();
         return redirect()->back();
     }
+
+
 }
